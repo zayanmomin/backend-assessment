@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'accounts',
-    'projects',
+    'note_app',
 ]
 
 MIDDLEWARE = [
