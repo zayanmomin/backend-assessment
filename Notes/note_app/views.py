@@ -8,17 +8,6 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 
-# Create your views here.
-
-'''
-GET /api/notes: get a list of all notes for the authenticated user.
-GET /api/notes/:id: get a note by ID for the authenticated user.
-POST /api/notes: create a new note for the authenticated user.
-PUT /api/notes/:id: update an existing note by ID for the authenticated user.
-DELETE /api/notes/:id: delete a note by ID for the authenticated user.
-POST /api/notes/:id/share: share a note with another user for the authenticated user.
-GET /api/search?q=:query: search for notes based on keywords for the authenticated user.
-'''
 
 
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
@@ -34,8 +23,7 @@ def manage_notes(request, id=None):
         * Perform the operation.
     '''
     data = request.data
-    token = request.COOKIES.get('jwt')
-    user = getUser(token)
+    user = getUser(request.COOKIES.get('jwt'))
 
     # Getting notes
     if request.method == 'GET':
@@ -52,7 +40,7 @@ def manage_notes(request, id=None):
         # Get all notes
         notes = Note.objects.filter(owner=user)
         serializer = NoteSerializer(notes, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
     # Creating a new note
@@ -72,7 +60,7 @@ def manage_notes(request, id=None):
             serializer = NoteSerializer(note, data=data)
             if serializer.is_valid():
                 serializer.save()
-                return Response(serializer.data)
+                return Response(serializer.data, status=status.HTTP_200_OK)
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             
@@ -82,7 +70,7 @@ def manage_notes(request, id=None):
         note = get_object_or_404(Note, id=id, owner=user)
         if note.owner == user:
             note.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+            return Response({'detail': 'Note deleted successfully.'}, status=status.HTTP_200_OK)
         else:
             return Response({'detail': 'You are not authorized to delete this note.'}, status=status.HTTP_401_UNAUTHORIZED)
         
@@ -114,13 +102,16 @@ def share_note(request, id):
 @api_view(['GET'])
 @permission_classes([HasValidToken])
 def search(request):
+    '''
+    Search notes based on the query parameter for the authenticated user.
+    '''
     user = getUser(request.COOKIES.get('jwt'))
     query = request.GET.get('q', '')
-    print(query)
     if query:
-        # Search notes based on keywords for the authenticated user
+        # Search for notes based on the query in the title or the note
         notes = Note.objects.filter(Q(owner=user) & (Q(title__icontains=query) | Q(note__icontains=query)))
         serializer = NoteSerializer(notes, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     else:
         return Response({'detail': 'Please provide a search query.'}, status=status.HTTP_400_BAD_REQUEST)
+
