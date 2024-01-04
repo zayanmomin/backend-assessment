@@ -5,6 +5,7 @@ from .models import Note
 from accounts.auth import getUser, HasValidToken
 from rest_framework import status
 from django.shortcuts import get_object_or_404
+from django.contrib.auth import get_user_model
 
 # Create your views here.
 
@@ -86,10 +87,26 @@ def manage_notes(request, id=None):
         
 
 
-
 @api_view(['POST'])
 @permission_classes([HasValidToken])
-def share_note(request):
-    pass
+def share_note(request, id):
+    '''
+    Share a note with another user using their email.
+    '''
+    user = getUser(request.COOKIES.get('jwt'))
+    note = get_object_or_404(Note, id=id)
+
+    # Check if the user is the owner of the note
+    if not user == note.owner:
+        return Response({'detail': 'You are not authorized to share this note.'}, status=status.HTTP_401_UNAUTHORIZED)
+
+    share_with_email = request.data.get('share_with', '') # Get the email of the user to share the note with from the request data
+    try:
+        share_with_user = get_user_model().objects.get(email=share_with_email) # Get the user object from the email
+        Note.objects.create(title=note.title, note=note.note, owner=share_with_user) # Create a new note for the user
+        return Response({'detail': 'Note shared successfully.'}, status=status.HTTP_200_OK)
+    except get_user_model().DoesNotExist:
+        return Response({'detail': 'User with this email does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+    
 
 

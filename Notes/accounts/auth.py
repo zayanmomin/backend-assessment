@@ -34,8 +34,8 @@ class HasValidToken(permissions.BasePermission):
 
 def verify_token(token):
     if token in accounts_views.BLACKLIST:
-        print("Token is in the blacklist. F off")
-        raise PermissionDenied("F off")
+        print("Token is in the blacklist.")
+        raise PermissionDenied("Token Blacklisted. Access denied.")
     
     try:
         jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
