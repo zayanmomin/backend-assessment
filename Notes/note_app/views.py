@@ -6,6 +6,7 @@ from accounts.auth import getUser, HasValidToken
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
+from django.db.models import Q
 
 # Create your views here.
 
@@ -110,3 +111,16 @@ def share_note(request, id):
     
 
 
+@api_view(['GET'])
+@permission_classes([HasValidToken])
+def search(request):
+    user = getUser(request.COOKIES.get('jwt'))
+    query = request.GET.get('q', '')
+    print(query)
+    if query:
+        # Search notes based on keywords for the authenticated user
+        notes = Note.objects.filter(Q(owner=user) & (Q(title__icontains=query) | Q(note__icontains=query)))
+        serializer = NoteSerializer(notes, many=True)
+        return Response(serializer.data)
+    else:
+        return Response({'detail': 'Please provide a search query.'}, status=status.HTTP_400_BAD_REQUEST)
