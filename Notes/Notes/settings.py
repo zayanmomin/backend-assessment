@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-^ckl#c!)@paa_yt&#f6pyg%g2&#5ux=$3=^hxpy8p0cy*9b=&k
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -91,15 +91,19 @@ WSGI_APPLICATION = 'Notes.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'backend',
+        'USER': 'admin',
+        'PASSWORD': 'zayanmomin@gmail.com',
+        'HOST': 'db',
+        'PORT': '',
     }
 }
 
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
+        "LOCATION": "redis://redis:6379/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
