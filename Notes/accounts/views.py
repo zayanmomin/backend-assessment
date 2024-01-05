@@ -17,7 +17,7 @@ def register(request):
         user_serializer = UserSerializer(data=request.data)
         user_serializer.is_valid(raise_exception=True)
         user_serializer.save()
-        return Response(user_serializer.data)
+        return Response(user_serializer.data, status=201)
 
 
 @api_view(['POST'])
@@ -66,7 +66,7 @@ def user_view(request):
     user = User.objects.get(id=payload['id'])
     serializer = UserSerializer(user)
 
-    return Response(serializer.data)
+    return Response(serializer.data, status=200)
 
 
 @api_view(['POST'])

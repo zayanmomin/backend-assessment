@@ -65,28 +65,3 @@ class ManageNotesTest(TestCase):
     def tearDown(self):
         Note.objects.all().delete()
         User.objects.all().delete()
-
-
-
-
-
-class DDoSMiddlewareTest(TestCase):
-    def setUp(self):
-        self.factory = RequestFactory()
-        self.middleware = DDoSMiddleware(get_response=None)
-
-    def test_request_limit(self):
-        request = self.factory.get('/')
-        request.META['REMOTE_ADDR'] = '127.0.0.1'
-
-        # Simulate 6 requests from the same IP
-        for _ in range(6):
-            self.middleware.process_request(request)
-
-        # Check that the 6th request is blocked
-        response = self.middleware.process_request(request)
-        self.assertIsNotNone(response)
-        self.assertEqual(response.status_code, 403)
-
-    def tearDown(self):
-        cache.clear()

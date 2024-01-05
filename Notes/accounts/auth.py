@@ -34,7 +34,7 @@ class HasValidToken(permissions.BasePermission):
 
 def verify_token(token):
     if token in accounts_views.BLACKLIST:
-        print("Token is in the blacklist.")
+        print("Token is in the blacklist. Access Denied")
         raise PermissionDenied("Token Blacklisted. Access denied.")
     
     try:

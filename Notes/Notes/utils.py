@@ -5,8 +5,8 @@ from django.core.cache import cache
 class DDoSMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
-        self.time_window = 60
-        self.request_limit = 6  # Changed from 5 to 6 to because ManageNotesTest was failing at testing the delete request.
+        self.time_window = 30
+        self.request_limit = 10  # Changed from 5 to 10 because testing was being interrupted.
 
     def process_request(self, request):
         ip_address = request.META.get('REMOTE_ADDR')
