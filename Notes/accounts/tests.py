@@ -7,11 +7,25 @@ from .serializers import UserSerializer
 import jwt
 from django.conf import settings
 import time
+import json
 from django.contrib.auth import get_user_model
 
+class Registration_Test(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.user_data = {
+            "email": "testuser@test.com",
+            "password": "testpassword"
+        }
 
+    def test_register(self):
+        response = self.client.post('/api/auth/signup/', self.user_data)
 
-class User_and_JWT_Tests(TestCase):
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(get_user_model().objects.count(), 1)
+    
+
+class JWT_Tests(TestCase):
     '''
     Tests for user registration, login, blacklisting and expiring JWTs.
     '''
@@ -56,7 +70,7 @@ class User_and_JWT_Tests(TestCase):
         * Add the token to the client's cookies.
         * Wait for the token to expire.
         * Simulate a GET request to /api/notes with the expired token.
-        * Check that the response has a 401 status code.
+        * Check that the response has a 403 status code.
         '''
 
         self.token = jwt.encode({'id': self.user.id, 'exp': time.time() + 1}, settings.SECRET_KEY, algorithm='HS256')
