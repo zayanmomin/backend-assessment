@@ -17,15 +17,15 @@ A basic RESTful API built with Django Rest Framework, demonstrating user authent
 - **POST /api/notes/:id/share:** Shares a note with another user for the authenticated user.
 - **GET /api/search?q=:query:** Searches for notes based on keywords for the authenticated user.
 
-### Building and Running the Project:
+## Running the Project with Docker:
 
-1. Build the Docker containers:
+1. **Build the Docker containers:**
 
     ```bash
     docker-compose up --build
     ```
 
-2. Apply migrations:
+2. **Apply migrations:**
 
     ```bash
     docker-compose run web python manage.py makemigrations accounts
@@ -33,15 +33,53 @@ A basic RESTful API built with Django Rest Framework, demonstrating user authent
     docker-compose run web python manage.py migrate
     ```
 
-### Running Tests:
-
-Run tests for each app:
+3. **Run tests for each app:**
 
 ```bash
 docker-compose run web python manage.py test Notes
 docker-compose run web python manage.py test note_app
 docker-compose run web python manage.py test accounts
 ```
+
+## Running the Project without Docker
+
+1. **Clone the repository**
+2. **Create a virtual environment**
+3. **Install the required dependencies**
+4. **Configure Database:**
+
+   Update the `DATABASES` setting in `config/settings.py` with your PostgreSQL configuration:
+
+   ```python
+   DATABASES = {
+       'default': {
+           'ENGINE': 'django.db.backends.postgresql',
+           'NAME': 'your_database_name',
+           'USER': 'your_database_user',
+           'PASSWORD': 'your_database_password',
+           'HOST': 'localhost',
+           'PORT': '5432',
+       }
+   }
+   ```
+
+5. **Apply Migrations:**
+
+   ```bash
+   python manage.py makemigrations accounts
+   python manage.py makemigrations note_app
+   python manage.py migrate
+   ```
+
+6. **Run the Tests or use Postman to test the endpoints:**
+
+  Run tests for each app:
+
+    ```bash
+    python manage.py test notes
+    python manage.py test note_app
+    python manage.py test accounts
+    ```
 
 
 ### Implementation Details:

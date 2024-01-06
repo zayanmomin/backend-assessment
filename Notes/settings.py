@@ -9,8 +9,11 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -95,7 +98,7 @@ DATABASES = {
         'NAME': 'backend',
         'USER': 'admin',
         'PASSWORD': 'zayanmomin@gmail.com',
-        'HOST': 'db',
+        'HOST': os.getenv('DB_HOST', 'localhost'),
         'PORT': '',
     }
 }
@@ -103,12 +106,19 @@ DATABASES = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://redis:6379/1",
+        "LOCATION": f"redis://{os.getenv('REDIS_HOST', 'localhost')}:6379/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     }
 }
+
+# Check if running inside Docker and override values if true
+if os.getenv('DOCKER_ENV', None) is not None:
+    DATABASES['default']['HOST'] = 'db'
+    CACHES["default"]["LOCATION"] = "redis://redis:6379/1"
+
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

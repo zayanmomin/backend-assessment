@@ -12,7 +12,7 @@ class DDoSMiddlewareTest(TestCase):
         request.META['REMOTE_ADDR'] = '127.0.0.1'
 
         # Simulate n requests from the same IP
-        for _ in range(10):
+        for _ in range(25):
             self.middleware.process_request(request)
 
         # Check that the nth request is blocked
