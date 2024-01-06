@@ -35,11 +35,11 @@ A basic RESTful API built with Django Rest Framework, demonstrating user authent
 
 3. **Run tests for each app:**
 
-```bash
-docker-compose run web python manage.py test Notes
-docker-compose run web python manage.py test note_app
-docker-compose run web python manage.py test accounts
-```
+    ```bash
+    docker-compose run web python manage.py test Notes
+    docker-compose run web python manage.py test note_app
+    docker-compose run web python manage.py test accounts
+    ```
 
 ## Running the Project without Docker
 
@@ -72,8 +72,6 @@ docker-compose run web python manage.py test accounts
    ```
 
 6. **Run the Tests or use Postman to test the endpoints:**
-
-  Run tests for each app:
 
     ```bash
     python manage.py test notes
