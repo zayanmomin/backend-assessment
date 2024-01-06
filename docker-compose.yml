@@ -3,10 +3,8 @@ version: '3.8'
 services:
   db:
     image: postgres
-    environment:
-      - POSTGRES_DB=backend
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=zayanmomin@gmail.com
+    env_file:
+      - .env.example
   redis:
     image: "redis:alpine"
   web:
@@ -19,3 +17,7 @@ services:
     depends_on:
       - db
       - redis
+    environment:
+      - DOCKER_ENV=1
+    env_file:
+      - .env.example
